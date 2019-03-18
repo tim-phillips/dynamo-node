@@ -6,7 +6,7 @@ const getPromise = func => (method, params) => new Promise((resolve, reject) => 
 });
 
 // Exports DynamoDB function that returns an object of methods
-module.exports = (region = 'eu-central-1', configPath) => {
+module.exports = (region = 'eu-central-1', { accessKeyId, secretAccessKey }) => {
   AWS.config.update({ region });
   if (process.env.DYNAMO_ENV === 'test') {
     AWS.config.update({
@@ -15,8 +15,8 @@ module.exports = (region = 'eu-central-1', configPath) => {
       secretAccessKey: 'test',
       endpoint: process.env.DYNAMO_URI || 'http://localhost:8000',
     });
-  } else if (configPath) {
-    AWS.config.loadFromPath(configPath);
+  } else if (accessKeyId && secretAccessKey) {
+    AWS.config.update({ accessKeyId, secretAccessKey, });
   }
 
   const dynamoDB = new AWS.DynamoDB();
